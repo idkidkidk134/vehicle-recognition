@@ -1,0 +1,156 @@
+/* 基础样式 */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  text-align: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 拥堵卡片样式 */
+.congestion-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+  background: white;
+  transition: all 0.3s;
+}
+
+.congestion-card.congested {
+  border-color: #ff4d4f;
+  background: #fff1f0;
+}
+
+/* 仪表盘样式 */
+.gauge {
+  height: 24px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  margin: 10px 0;
+  position: relative;
+}
+
+.gauge .fill {
+  background: linear-gradient(90deg, #52c41a, #faad14);
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.5s;
+}
+
+.gauge span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+}
+
+/* 问答模块遮罩层 */
+.qa-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  backdrop-filter: blur(3px);
+}
+
+/* 问答模块容器 */
+.qa-container {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 600px;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 按钮组样式 */
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* 语音识别按钮样式 */
+#startRecognition {
+  background: #ff6b6b;
+  margin-left: 10px;
+}
+
+#startRecognition:hover {
+  background: #ff5252;
+}
+
+#startRecognition.listening {
+  background-color: #4CAF50;
+  animation: pulse 1.5s infinite;
+}
+
+/* 关闭按钮样式 */
+.close-qa-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.close-qa-btn:hover {
+  background: #c82333;
+}
+
+/* 打开问答按钮样式 */
+.open-qa-btn {
+  margin: 20px auto;
+  padding: 10px 25px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.open-qa-btn:hover {
+  background: #5a6268;
+}
+
+/* 动画效果 */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -55%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}

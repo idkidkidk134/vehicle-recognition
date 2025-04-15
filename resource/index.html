@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>车辆检测视频处理（优化版）</title>
+  <!-- 外部CSS引用 -->
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .video-container {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .video-box {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      width: 45%;
+      margin-bottom: 20px;
+    }
+    video {
+      width: 100%;
+      border-radius: 5px;
+      max-height: 300px;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      background: white;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #007BFF;
+      color: white;
+    }
+    .stats-container {
+      margin-top: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .loading {
+      display: none;
+      font-size: 18px;
+      color: #007BFF;
+      margin-top: 10px;
+    }
+    .progress-container {
+      width: 100%;
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 20px;
+      margin-top: 10px;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #007BFF;
+      color: white;
+      text-align: center;
+      line-height: 20px;
+      transition: width 0.3s;
+    }
+    .qa-container {
+      margin-top: 30px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: left;
+    }
+    textarea {
+      width: 100%;
+      height: 80px;
+      padding: 10px;
+      font-size: 16px;
+      resize: vertical;
+    }
+    .qa-button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .qa-button:hover {
+      background: #0056b3;
+    }
+    .qa-output {
+      margin-top: 10px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      min-height: 60px;
+      border: 1px solid #ccc;
+    }
+    .upload-btn {
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .upload-btn:hover {
+      background: #218838;
+    }
+    .error-message {
+      color: #dc3545;
+      margin-top: 10px;
+    }
+    .success-message {
+      color: #28a745;
+      margin-top: 10px;
+    }
+    @media (max-width: 768px) {
+      .video-box {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>车辆检测视频处理（优化版）</h2>
+
+    <div>
+      <input type="file" id="videoUpload" accept="video/*">
+      <button class="upload-btn" onclick="startUpload()">开始处理</button>
+      <p class="loading" id="loadingText">处理中，请稍候...</p>
+      <p id="statusMessage" class="success-message"></p>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar">0%</div>
+      </div>
+    </div>
+
+    <div class="video-container">
+      <div class="video-box">
+        <h3>原始视频</h3>
+        <video id="originalVideo" controls></video>
+      </div>
+      <div class="video-box">
+        <h3>处理后的视频</h3>
+        <video id="processedVideo" controls></video>
+        <br>
+        <a id="downloadLink" style="display:none;" class="download-btn" download="processed_video.mp4">下载处理后的视频</a>
+      </div>
+    </div>
+
+    <div class="stats-container">
+       <h3>车辆检测统计</h3>
+  <table>
+    <tr>
+      <th>总检测车辆数</th>
+      <th>每秒新增车辆</th>
+      <th>拥堵报警次数</th>
+      <th>识别成功车辆数</th>
+      <th>识别失败车辆数</th>
+      <th>当前页面车辆总数</th>
+    </tr>
+    <tr>
+      <td id="total-vehicles">-</td>
+      <td id="new-vehicles">-</td>
+      <td id="congestion-alerts">-</td>
+      <td id="detected-vehicles">-</td>
+      <td id="failed-vehicles">-</td>
+      <td id="last_fame_count">-</td>
+    </tr>
+    <!-- 添加这行显示实时拥堵状态 -->
+    <tr>
+      <td colspan="6" id="congestion-status" style="text-align: center; font-weight: bold;">
+        交通状态: 等待数据...
+      </td>
+    </tr>
+  </table>
+      <h3>车辆分类统计</h3>
+      <table>
+        <tr>
+          <th>轿车</th>
+          <th>卡车</th>
+          <th>摩托车</th>
+          <th>公交车</th>
+          <th>其他</th>
+        </tr>
+        <tr>
+          <td id="car-count">-</td>
+          <td id="truck-count">-</td>
+          <td id="motorcycle-count">-</td>
+          <td id="bus-count">-</td>
+          <td id="other-count">-</td>
+        </tr>
+      </table>
+
+      <h3>运行数据统计</h3>
+      <table>
+        <tr>
+          <th>运行时间 (秒)</th>
+          <th>处理帧数</th>
+          <th>平均处理时间 (毫秒/帧)</th>
+          <th>最大内存占用 (MB)</th>
+        </tr>
+        <tr>
+          <td id="runtime">-</td>
+          <td id="frame-count">-</td>
+          <td id="avg-frame-time">-</td>
+          <td id="max-memory">-</td>
+        </tr>
+      </table>
+      <h3>拥堵控制</h3>
+      <table>
+        <tr>
+          <th>拥堵指数</th>
+          <th>拥堵等级</th>
+
+        </tr>
+        <tr>
+           <td id="congestion-index">-</td>
+           <td id="congestion-level">-</td>
+        </tr>
+      </table>
+    </div>
+
+<button class="open-qa-btn" onclick="openQA()">打开数据综合问答</button>
+  </div>
+
+ <div class="qa-container" id="qaContainer" style="display: none;">
+  <button class="close-qa-btn" onclick="closeQA()">×</button>
+  <h3>数据综合问答</h3>
+  <textarea id="questionInput" placeholder="请输入你的问题，如：识别失败最多的是哪类车？"></textarea>
+  <div class="button-group">
+    <button class="qa-button" onclick="askQuestion()">开始问答</button>
+    <button class="qa-button" id="startRecognition" onclick="startSpeechRecognition()">
+      <span id="micIcon">🎤</span> <span id="recognitionText">语音输入</span>
+    </button>
+  </div>
+  <div id="answerOutput" class="qa-output">AI回答将在此显示...</div>
+</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
