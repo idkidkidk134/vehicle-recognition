@@ -1,0 +1,8 @@
+ultralytics>=8.3.99
+torch>=2.6.0
+torchvision>=0.21.0
+fastapi>=0.115.12
+opencv-python>=4.11.0.86
+scikit-image>=0.17.2
+filterpy>=1.4.5
+lap>=0.4.0
