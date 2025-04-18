@@ -413,7 +413,7 @@ async def ask_vehicle_stats(payload: QARequest):
     context = f"以下是识别出的车辆统计数据：\n{payload.stats}"
 
     ollama_payload = {
-        "model": "model1:latest",
+        "model": "DeepSeek-R1:1.5b",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": context},
