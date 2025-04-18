@@ -118,7 +118,408 @@ body {
   width: 30px;
   height: 30px;
   font-size: 16px;
-  cursor: pointer;
+  cursor: pointer;/* 基础样式 */
+:root {
+    --primary-color: #4a6bff;
+    --primary-hover: #3a5af5;
+    --danger-color: #ff4d4f;
+    --danger-hover: #ff3336;
+    --success-color: #52c41a;
+    --text-color: #333;
+    --light-text: #666;
+    --border-color: #e0e3e7;
+    --bg-color: #f5f7fa;
+    --card-bg: #fff;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* 按钮基础样式 */
+button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    outline: none;
+}
+
+/* 打开问答按钮 */
+.open-qa-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, var(--primary-color), #3a5af5);
+    color: white;
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(74, 107, 255, 0.3);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.open-qa-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 107, 255, 0.4);
+}
+
+/* 问答主容器 */
+.qa-container {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 420px;
+    max-height: 70vh;
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.qa-container.show {
+    opacity: 1;
+    transform: translateY(0);
+    display: flex;
+}
+
+.close-qa-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    font-size: 18px;
+    color: var(--light-text);
+}
+
+.close-qa-btn:hover {
+    background: #eee;
+    color: var(--text-color);
+}
+
+.qa-container h3 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* 问答内容区 */
+.qa-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#questionInput {
+    width: 100%;
+    min-height: 120px;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    resize: none;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+#questionInput:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 107, 255, 0.2);
+    outline: none;
+}
+
+/* 按钮组 */
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.qa-button {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: #f0f2f5;
+    color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.qa-button:hover {
+    background: #e4e7eb;
+}
+
+.qa-button.primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.qa-button.primary:hover {
+    background: var(--primary-hover);
+}
+
+/* 回答区域 */
+.answer-container {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.answer-header {
+    padding: 12px 16px;
+    background: #f9fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.answer-header span {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.copy-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    background: #f0f2f5;
+}
+
+.copy-btn:hover {
+    background: #e4e7eb;
+}
+
+.answer-content {
+    padding: 16px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* 历史记录容器 */
+.history-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 600px;
+    max-height: 70vh;
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.history-container.show {
+    opacity: 1;
+    display: flex;
+}
+
+.history-container h3 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    font-size: 18px;
+    color: var(--light-text);
+}
+
+.close-btn:hover {
+    background: #eee;
+    color: var(--text-color);
+}
+
+/* 历史记录操作按钮 */
+.history-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.action-btn.danger {
+    background: #fff2f0;
+    color: var(--danger-color);
+    border: 1px solid #ffccc7;
+}
+
+.action-btn.danger:hover {
+    background: #ffebee;
+}
+
+/* 历史记录列表 */
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 8px;
+}
+
+.history-item {
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.history-item:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 3px 10px rgba(74, 107, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.history-question {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.history-answer {
+    font-size: 13px;
+    color: var(--light-text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.history-time {
+    font-size: 12px;
+    color: #999;
+    text-align: right;
+}
+
+/* 空状态 */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    color: var(--light-text);
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+/* 遮罩层 */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    display: none;
+}
+
+.overlay.show {
+    display: block;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 语音识别激活状态 */
+#startRecognition.listening {
+    background: var(--danger-color);
+    color: white;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 77, 79, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .qa-container {
+        width: 90%;
+        right: 5%;
+        bottom: 80px;
+    }
+
+    .history-container {
+        width: 90%;
+        max-height: 80vh;
+    }
+}
   transition: background 0.2s;
 }
 
@@ -153,4 +554,171 @@ body {
 @keyframes fadeIn {
   from { opacity: 0; transform: translate(-50%, -55%); }
   to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+
+/* 历史记录容器样式 - 优化版 */
+.history-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85%;
+  max-width: 650px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  max-height: 75vh;
+  overflow-y: auto;
+  border: 1px solid #eaeaea;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 历史记录标题样式 */
+.history-container h3 {
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+/* 历史记录列表容器 */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* 单个历史记录项样式 */
+.history-item {
+  padding: 15px;
+  border-radius: 8px;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.history-item:hover {
+  background: #f0f7ff;
+  border-color: #d0e3ff;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* 历史记录问题样式 */
+.history-question {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-size: 1.05em;
+  line-height: 1.4;
+}
+
+/* 历史记录答案预览样式 */
+.history-answer {
+  color: #666;
+  font-size: 0.92em;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5px;
+}
+
+/* 历史记录时间样式 */
+.history-time {
+  font-size: 0.8em;
+  color: #999;
+  text-align: right;
+  margin-top: 5px;
+}
+
+/* 关闭按钮样式 */
+.close-history-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.2s;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-history-btn:hover {
+  color: #666;
+  background: #f5f5f5;
+}
+
+/* 空历史记录提示 */
+.history-empty {
+  text-align: center;
+  padding: 30px;
+  color: #888;
+  font-size: 1.1em;
+}
+
+.history-empty:before {
+  content: "📋";
+  font-size: 2em;
+  display: block;
+  margin-bottom: 10px;
+}
+
+
+
+/* 滚动条样式 */
+.history-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.history-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.history-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.history-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .history-container {
+    width: 90%;
+    padding: 20px 15px;
+  }
+
+  .history-item {
+    padding: 12px;
+  }
+
+  .history-question {
+    font-size: 1em;
+  }
 }
